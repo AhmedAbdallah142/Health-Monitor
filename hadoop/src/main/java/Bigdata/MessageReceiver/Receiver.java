@@ -115,7 +115,7 @@ public class Receiver {
     }
 
     private void sendBatch () throws IOException {
-        String hdfsFilePath = "hdfs://hadoop-master:9000/Logs/" + currDate + ".log";
+        String hdfsFilePath = "hdfs://localhost:9000/Logs/" + currDate + ".log";
 
         long tec = System.nanoTime();
 
