@@ -5,6 +5,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
+import org.apache.hadoop.mapred.lib.MultipleOutputs;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -41,7 +42,6 @@ public class WordCount {
 
         JobConf conf = new JobConf(WordCount.class);
         conf.setJobName("wordCount");
-
         conf.setOutputKeyClass(Text.class);
         conf.setOutputValueClass(IntWritable.class);
 
@@ -51,7 +51,6 @@ public class WordCount {
 
         conf.setInputFormat(TextInputFormat.class);
         conf.setOutputFormat(TextOutputFormat.class);
-
         FileInputFormat.setInputPaths(conf, new Path(args[0]));
         FileOutputFormat.setOutputPath(conf, new Path(args[1]));
 
