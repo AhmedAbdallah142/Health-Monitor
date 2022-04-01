@@ -44,7 +44,6 @@ public class MeanRam {
         conf.setOutputValueClass(IntWritable.class);
 
         conf.setMapperClass(MeanRam.Map.class);
-        conf.setCombinerClass(MeanRam.Reduce.class);
         conf.setReducerClass(MeanRam.Reduce.class);
 
         conf.setInputFormat(TextInputFormat.class);

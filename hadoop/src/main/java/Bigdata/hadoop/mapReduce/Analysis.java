@@ -8,9 +8,54 @@ import org.apache.hadoop.mapred.*;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 
 public class Analysis {
+//    public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, Text> {
+//        private final Text key = new Text();
+//        private final Text value = new Text();
+//
+//        public void map(LongWritable longWritable, Text text, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+//            JSONObject item = new JSONObject(text.toString());
+//            StringBuilder result = new StringBuilder();
+//            key.set(item.getString("serviceName"));
+//            JSONObject Disk = item.getJSONObject("Disk");
+//            JSONObject Ram = item.getJSONObject("RAM");
+//            result.append(item.getDouble("CPU")).append(",").append(Disk.getDouble("Free") / Disk.getDouble("Total"))
+//                    .append(",").append(Ram.getDouble("Free") / Ram.getDouble("Total"))
+//                    .append(",").append(item.getLong("Timestamp"));
+//            value.set(result.toString());
+//            output.collect(key, value);
+//        }
+//    }
+//
+//    public static class Reduce extends MapReduceBase implements Reducer<Text, Text, Text, Text> {
+//        final String DELIMITER = ",";
+//        private final Text value = new Text();
+//        public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+//            double CPU = 0, Disk = 0, Ram = 0;
+//            int count = 0;
+//            String[] data = new String[0];
+//            while (values.hasNext()) {
+//                data = values.next().toString().split(DELIMITER);
+//                CPU += Double.parseDouble(data[0]);
+//                Disk += Double.parseDouble(data[1]);
+//                Ram += Double.parseDouble(data[2]);
+//                count++;
+//            }
+//            value.set(CPU / count + "," + Disk / count + "," + Ram / count + "," + count + "," + data[3]);
+//            output.collect(key, value);
+//        }
+//    }
+
+    private static String getDate(Long timeStamp){
+        String pattern = "MM-dd-yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(new Date(System.currentTimeMillis()));
+    }
+
     public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, Text> {
         private final Text key = new Text();
         private final Text value = new Text();
@@ -18,7 +63,7 @@ public class Analysis {
         public void map(LongWritable longWritable, Text text, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
             JSONObject item = new JSONObject(text.toString());
             StringBuilder result = new StringBuilder();
-            key.set(item.getString("serviceName"));
+            key.set(getDate(item.getLong("Timestamp"))+","+item.getString("serviceName"));
             JSONObject Disk = item.getJSONObject("Disk");
             JSONObject Ram = item.getJSONObject("RAM");
             result.append(item.getDouble("CPU")).append(",").append(Disk.getDouble("Free") / Disk.getDouble("Total"))

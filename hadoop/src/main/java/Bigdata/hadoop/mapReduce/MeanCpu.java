@@ -42,7 +42,6 @@ public class MeanCpu {
         conf.setOutputValueClass(IntWritable.class);
 
         conf.setMapperClass(MeanCpu.Map.class);
-        conf.setCombinerClass(MeanCpu.Reduce.class);
         conf.setReducerClass(MeanCpu.Reduce.class);
 
         conf.setInputFormat(TextInputFormat.class);
