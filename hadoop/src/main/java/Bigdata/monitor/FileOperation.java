@@ -14,6 +14,9 @@ import java.nio.charset.StandardCharsets;
 
 public class FileOperation {
 
+    final String coreSite = "/usr/local/hadoop/etc/hadoop/core-site.xml";
+    final String hdfsSite = "/usr/local/hadoop/etc/hadoop/hdfs-site.xml";
+
     public String AddLogFile(FileSystem fileSystem, String content, String dest) throws IOException {
 
         Path destPath = new Path(dest);
@@ -50,21 +53,21 @@ public class FileOperation {
         bufferedWriter.close();
     }
 
-    public void ReadFile(FileSystem fileSystem, String dest) throws IOException {
+    public String ReadFile(FileSystem fileSystem, String dest) throws IOException {
         Path hdfsReadPath = new Path(dest);
         FSDataInputStream inputStream = fileSystem.open(hdfsReadPath);
         String out= IOUtils.toString(inputStream, "UTF-8");
-        System.out.println(out);
         inputStream.close();
+        return out;
     }
 
-    public  FileSystem configureFileSystem(String coreSitePath, String hdfsSitePath) {
+    public  FileSystem configureFileSystem() {
         FileSystem fileSystem = null;
         try {
             Configuration conf = new Configuration();
             conf.setBoolean("dfs.support.append", true);
-            Path coreSite = new Path(coreSitePath);
-            Path hdfsSite = new Path(hdfsSitePath);
+            Path coreSite = new Path(this.coreSite);
+            Path hdfsSite = new Path(this.hdfsSite);
             conf.addResource(coreSite);
             conf.addResource(hdfsSite);
             fileSystem = FileSystem.get(conf);

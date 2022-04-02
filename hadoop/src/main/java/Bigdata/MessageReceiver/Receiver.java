@@ -13,9 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 public class Receiver {
-    final String coreSite = "/usr/local/hadoop/etc/hadoop/core-site.xml";
-    final String hdfsSite = "/usr/local/hadoop/etc/hadoop/hdfs-site.xml";
-
     final private static int maxMessages = 25000;
 
     private String currDate;
@@ -120,7 +117,7 @@ public class Receiver {
         long tec = System.nanoTime();
 
         FileOperation file = new FileOperation();
-        FileSystem fileSystem = file.configureFileSystem(coreSite, hdfsSite);
+        FileSystem fileSystem = file.configureFileSystem();
         System.out.println(file.AddLogFile(fileSystem,messagesBuffer.toString(),hdfsFilePath));
 //        file.ReadFile(fileSystem,hdfsFilePath);
         file.closeFileSystem(fileSystem);
