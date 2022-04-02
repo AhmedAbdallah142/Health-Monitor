@@ -33,7 +33,7 @@ public class BetweenDate {
             String[] keySplit = textSplit[0].split(",");
             try {
                 long time = getTimeStamp(keySplit[0] + " 01");
-                if (time >= from && time <= to) {
+                if (time >= from && time < to) {
                     key.set(keySplit[1]);
                     value.set(textSplit[1]);
                     context.write(key, value);
@@ -52,18 +52,34 @@ public class BetweenDate {
             double CPU = 0, Disk = 0, Ram = 0, temp;
             double peakCpu = 0, peakDisk = 0, peakRam = 0;
             long tPeakCpu = 0, tPeakDisk = 0, tPeakRam = 0;
-            int count = 0;
-            for (Text t:values){
+            int count = 0, tempCount;
+            for (Text t : values) {
                 results = t.toString().split(",");
-
+                tempCount = Integer.parseInt(results[0]);
+                CPU += Double.parseDouble(results[1]) * tempCount;
+                temp = Double.parseDouble(results[2]);
+                if (peakCpu < temp) {
+                    peakCpu = temp;
+                    tPeakCpu = Long.parseLong(results[3]);
+                }
+                Disk += Double.parseDouble(results[4]) * tempCount;
+                temp = Double.parseDouble(results[5]);
+                if (peakDisk < temp) {
+                    peakDisk = temp;
+                    tPeakDisk = Long.parseLong(results[6]);
+                }
+                Ram += Double.parseDouble(results[7]) * tempCount;
+                temp = Double.parseDouble(results[8]);
+                if (peakRam < temp) {
+                    peakRam = temp;
+                    tPeakRam = Long.parseLong(results[9]);
+                }
+                count += tempCount;
             }
+            value.set(count + "," + CPU / count + "," + tPeakCpu + "," + Disk / count + "," + tPeakDisk + "," + Ram / count + "," + tPeakRam);
             context.write(key, value);
+            System.out.println("\n\n\n"+value);
         }
-    }
-
-    private static String getDate(Long timeStamp) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        return simpleDateFormat.format(new Date(timeStamp));
     }
 
     private static long getTimeStamp(String Day) throws ParseException {
@@ -92,13 +108,8 @@ public class BetweenDate {
     }
 
     public static void main(String[] args) throws Exception {
-        analyze("02-04-2022","02-04-2022");
-//        System.out.println(getTimeStamp("02-04-2022 00"));
-//        System.out.println(getTimeStamp("02-04-2022 01"));
-//        System.out.println(getTimeStamp("02-04-2022 02"));
-//        System.out.println(getTimeStamp("02-04-2022 10"));
-//        System.out.println(getTimeStamp("02-04-2022 11"));
-//        Date d = new Date(getTimeStamp("02-04-2022 24"));
-//        System.out.println(d);
+        System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
+        System.setProperty("HADOOP_USER_NAME", "hadoopuser");
+        analyze("01-04-2022", "02-04-2022");
     }
 }
