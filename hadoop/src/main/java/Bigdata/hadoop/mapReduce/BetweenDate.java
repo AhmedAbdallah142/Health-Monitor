@@ -110,6 +110,6 @@ public class BetweenDate {
     public static void main(String[] args) throws Exception {
         System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
-        analyze("01-04-2022", "02-04-2022");
+        analyze("01-04-1930", "02-04-2022");
     }
 }
