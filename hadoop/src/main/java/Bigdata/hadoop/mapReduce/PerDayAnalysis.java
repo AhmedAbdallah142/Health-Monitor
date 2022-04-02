@@ -80,14 +80,16 @@ public class PerDayAnalysis {
     }
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
+        System.setProperty("HADOOP_USER_NAME", "hadoopuser");
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "BetweenDate");
-        job.setJarByClass(BetweenDate.class);
+        Job job = Job.getInstance(conf, "Per Day Analysis");
+        job.setJarByClass(PerDayAnalysis.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
-        job.setMapperClass(BetweenDate.Map.class);
-        job.setReducerClass(BetweenDate.Reduce.class);
+        job.setMapperClass(Map.class);
+        job.setReducerClass(Reduce.class);
 
         job.setInputFormatClass(org.apache.hadoop.mapreduce.lib.input.TextInputFormat.class);
         job.setOutputFormatClass(org.apache.hadoop.mapreduce.lib.output.TextOutputFormat.class);
