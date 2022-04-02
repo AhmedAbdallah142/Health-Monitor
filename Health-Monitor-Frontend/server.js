@@ -1,5 +1,6 @@
 const http = require("http");
 const fs = require("fs");
+const port = 8085
 
 http.createServer((req, res) => {
     if(req.url === "/") {
@@ -18,4 +19,4 @@ http.createServer((req, res) => {
                 res.end(cont);
         })
     }
-}).listen(8080, () => console.log("[+] Server is running..."));
+}).listen(port, () => console.log(`[+] Server is running on port ${port}`));
