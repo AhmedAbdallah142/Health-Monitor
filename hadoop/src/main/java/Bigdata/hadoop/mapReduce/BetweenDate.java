@@ -102,7 +102,7 @@ public class BetweenDate {
         job.setOutputFormatClass(TextOutputFormat.class);
 
         FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Analysis"));
-        FileOutputFormat.setOutputPath(job, new Path("hdfs://localhost:9000/Result"));
+        FileOutputFormat.setOutputPath(job, new Path("hdfs://localhost:9000/Results"));
 
         job.waitForCompletion(true);
     }

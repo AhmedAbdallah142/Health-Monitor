@@ -40,7 +40,7 @@ function getAnalysis() {
 
   lock = true;
 
-  fetch(`localhost:8080/Data/getdata?from=${from}&to=${to}`)
+  fetch(`http://localhost:8080/Data/getdata?from=${from}&to=${to}`)
     .then((res) => {
       if (res.ok) return res.json();
       else {

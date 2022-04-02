@@ -1,5 +1,8 @@
 package Bigdata.hadoop;
 
+import Bigdata.monitor.FileOperation;
+import org.apache.hadoop.fs.FileSystem;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,8 +13,12 @@ import static Bigdata.hadoop.mapReduce.BetweenDate.analyze;
 public class getDataFile {
 
     public  String getAllData() throws IOException {
-        String result = ReadFileData("result/part-r-00000");
-        deleteDirectoryRecursionJava6(new File("result"));
+        FileOperation file = new FileOperation();
+        FileSystem fileSystem = file.configureFileSystem();
+        String result = file.ReadFile(fileSystem,"hdfs://localhost:9000/Results/part-r-00000");
+        file.closeFileSystem(fileSystem);
+//        String result = ReadFileData("hdfs://localhost:9000/Results/part-r-00000");
+//        deleteDirectoryRecursionJava6(new File("hdfs://localhost:9000/Results"));
         return result;
     }
 
