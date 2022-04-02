@@ -15,16 +15,11 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class BetweenDate {
-    private static String getDate(Long timeStamp) {
-        String pattern = "MM-dd-yyyy";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        return simpleDateFormat.format(new Date(timeStamp));
-    }
-
     public static class Map extends Mapper<LongWritable, Text, Text, Text> {
         private final Text key = new Text();
         private final Text value = new Text();
@@ -84,7 +79,16 @@ public class BetweenDate {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    private static String getDate(Long timeStamp) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        return simpleDateFormat.format(new Date(timeStamp));
+    }
+    private static long getTimeStamp(String Day) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        return simpleDateFormat.parse(Day).getTime();
+    }
+
+    public static void analyze() throws Exception{
         Configuration conf = new Configuration();
         conf.set("from", "1");
         conf.set("to", "2");
@@ -102,5 +106,11 @@ public class BetweenDate {
         FileInputFormat.addInputPath(job, new Path("input"));
         FileOutputFormat.setOutputPath(job, new Path("analysis"));
         job.waitForCompletion(true);
+    }
+    public static void main(String[] args) throws Exception {
+//        analyze();
+
+        Date d = new Date(getTimeStamp("02-04-2022"));
+        System.out.println(d);
     }
 }

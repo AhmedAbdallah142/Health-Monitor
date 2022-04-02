@@ -18,7 +18,7 @@ import java.util.Iterator;
 
 public class PerDayAnalysis {
     private static String getDate(Long timeStamp) {
-        String pattern = "MM-dd-yyyy";
+        String pattern = "dd-MM-yyyy";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         return simpleDateFormat.format(new Date(timeStamp));
     }
