@@ -12,6 +12,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import java.util.Iterator;
 public class PerDayAnalysis {
     private static String getDate(Long timeStamp) {
         String pattern = "dd-MM-yyyy";
+        timeStamp*=1000;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         return simpleDateFormat.format(new Date(timeStamp));
     }
@@ -28,17 +30,22 @@ public class PerDayAnalysis {
         private final Text value = new Text();
 
         public void map(LongWritable longWritable, Text text, Context context) throws IOException, InterruptedException {
-            JSONObject item = new JSONObject(text.toString());
-            StringBuilder result = new StringBuilder();
+            try {
+                JSONObject item = new JSONObject(text.toString());
+                StringBuilder result = new StringBuilder();
 
-            key.set(getDate(item.getLong("Timestamp")) + "," + item.getString("serviceName"));
-            JSONObject Disk = item.getJSONObject("Disk");
-            JSONObject Ram = item.getJSONObject("RAM");
-            result.append(item.getDouble("CPU")).append(",").append(Disk.getDouble("Free") / Disk.getDouble("Total"))
-                    .append(",").append(Ram.getDouble("Free") / Ram.getDouble("Total"))
-                    .append(",").append(item.getLong("Timestamp"));
-            value.set(result.toString());
-            context.write(key, value);
+                key.set(getDate(item.getLong("Timestamp")) + "," + item.getString("serviceName"));
+                JSONObject Disk = item.getJSONObject("Disk");
+                JSONObject Ram = item.getJSONObject("RAM");
+                result.append(item.getDouble("CPU")).append(",").append(Disk.getDouble("Free") / Disk.getDouble("Total"))
+                        .append(",").append(Ram.getDouble("Free") / Ram.getDouble("Total"))
+                        .append(",").append(item.getLong("Timestamp"));
+                value.set(result.toString());
+                context.write(key, value);
+            }catch (Exception e){
+                System.out.println(text);
+                e.printStackTrace();
+            }
         }
     }
 
@@ -94,8 +101,8 @@ public class PerDayAnalysis {
         job.setInputFormatClass(org.apache.hadoop.mapreduce.lib.input.TextInputFormat.class);
         job.setOutputFormatClass(org.apache.hadoop.mapreduce.lib.output.TextOutputFormat.class);
 
-        FileInputFormat.addInputPath(job, new Path("input"));
-        FileOutputFormat.setOutputPath(job, new Path("analysis"));
+        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Logs"));
+        FileOutputFormat.setOutputPath(job, new Path("hdfs://localhost:9000/Analysis"));
         job.waitForCompletion(true);
     }
 }
