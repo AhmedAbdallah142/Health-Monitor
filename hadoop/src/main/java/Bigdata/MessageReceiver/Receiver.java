@@ -16,7 +16,7 @@ public class Receiver {
     final String coreSite = "/usr/local/hadoop/etc/hadoop/core-site.xml";
     final String hdfsSite = "/usr/local/hadoop/etc/hadoop/hdfs-site.xml";
 
-    final private static int maxMessages = 1024;
+    final private static int maxMessages = 25000;
 
     private String currDate;
     private int messagesInBuffer = 0;
@@ -57,7 +57,7 @@ public class Receiver {
         }
     }
 
-    private void handleReceived(byte[] data) throws IOException {
+    public void handleReceived(byte[] data) throws IOException {
         if(!getDate().equals(currDate)) {
             sendBatch();
             currDate = getDate();
@@ -76,13 +76,13 @@ public class Receiver {
                 messagesBuffer.append(obj).append("\n");
                 ++messagesInBuffer;
 
-                if(messagesInBuffer % 128 == 0) {
-                    double throughput = ((double) messagesInBuffer / (System.nanoTime() - startTime)) * 1e9;
-                    System.out.println(
-                            String.format("[+] Number of messages in buffer = %d \n", messagesInBuffer) +
-                                    String.format("[+] Current throughput = %.2f records/sec", throughput)
-                    );
-                }
+//                if(messagesInBuffer % 128 == 0) {
+//                    double throughput = ((double) messagesInBuffer / (System.nanoTime() - startTime)) * 1e9;
+//                    System.out.println(
+//                            String.format("[+] Number of messages in buffer = %d \n", messagesInBuffer) +
+//                                    String.format("[+] Current throughput = %.2f records/sec", throughput)
+//                    );
+//                }
 
                 JSON_start = JSON_end;
             }
@@ -122,7 +122,7 @@ public class Receiver {
         FileOperation file = new FileOperation();
         FileSystem fileSystem = file.configureFileSystem(coreSite, hdfsSite);
         System.out.println(file.AddLogFile(fileSystem,messagesBuffer.toString(),hdfsFilePath));
-        file.ReadFile(fileSystem,hdfsFilePath);
+//        file.ReadFile(fileSystem,hdfsFilePath);
         file.closeFileSystem(fileSystem);
 //        try {
 //            Thread.sleep((int) (1000 * Math.random()));
@@ -164,7 +164,7 @@ public class Receiver {
 
     public static void main(String[] args) throws IOException {
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
-        System.setProperty("hadoop.home.dir", "/");
+        System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
         Receiver r = new Receiver();
         r.runServer(3500);
     }

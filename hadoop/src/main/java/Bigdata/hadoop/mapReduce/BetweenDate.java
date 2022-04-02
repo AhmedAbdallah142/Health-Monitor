@@ -101,8 +101,8 @@ public class BetweenDate {
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
-        FileInputFormat.addInputPath(job, new Path("analysis"));
-        FileOutputFormat.setOutputPath(job, new Path("result"));
+        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Analysis"));
+        FileOutputFormat.setOutputPath(job, new Path("hdfs://localhost:9000/Result"));
 
         job.waitForCompletion(true);
     }
@@ -110,6 +110,6 @@ public class BetweenDate {
     public static void main(String[] args) throws Exception {
         System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
-        analyze("01-04-1930", "02-04-2022");
+        analyze("01-07-2022", "01-10-2022");
     }
 }
