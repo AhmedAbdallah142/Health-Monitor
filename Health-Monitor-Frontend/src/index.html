@@ -9,7 +9,41 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <h1>Hello World!</h1>
+    <header>Health Mointor</header>
+    <div class="date-picker">
+      <div class="date">
+        <label for="start-date">from </label>
+        <input type="date" id="start-date" name="start-date">
+      </div>
+      <div class="date">
+        <label for="end-date">to </label>
+        <input type="date" id="end-date" name="end-date">
+      </div>
+    </div>
+    <div class="show-stats" onclick="getAnalysis()">Show Analytics</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Service Name</th>
+          <th>Messages</th>
+          <th colspan="2">CPU</th>
+          <th colspan="2">RAM</th>
+          <th colspan="2">Disk</th>
+        </tr>
+        <tr>
+          <th></th>
+          <th></th>
+          <th>Mean Usage</th>
+          <th>Peak time</th>
+          <th>Mean Usage</th>
+          <th>Peak time</th>
+          <th>Mean Usage</th>
+          <th>Peak time</th>
+        </tr>
+      </thead>
+      <tbody id="data">
+      </tbody>
+    </table>
 
     <script src="./script.js"></script>
 </body>
