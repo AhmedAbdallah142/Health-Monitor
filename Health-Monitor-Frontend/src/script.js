@@ -28,14 +28,19 @@ function getAnalysis() {
   const from = startDate.value.split("-").reverse().join("-"),
     to = endDate.value.split("-").reverse().join("-");
 
-  if (!(from && to && !lock)) {
+  if(lock) {
+    window.alert("Locked!")
+    return;
+  }
+
+  if (!(from && to)) {
     window.alert("Select the dates");
     return;
   }
 
   lock = true;
 
-  fetch(`localhost:8085/Data/getData?from=${from}&to=${to}`)
+  fetch(`localhost:8080/Data/getdata?from=${from}&to=${to}`)
     .then((res) => {
       if (res.ok) return res.json();
       else {
