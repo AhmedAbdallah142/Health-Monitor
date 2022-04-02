@@ -2,11 +2,7 @@ package Bigdata.hadoop.Controller;
 
 import Bigdata.hadoop.Service;
 import Bigdata.hadoop.getDataFile;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,8 +11,8 @@ import java.util.List;
 
 import static Bigdata.hadoop.mapReduce.BetweenDate.analyze;
 
-@Controller
-@ResponseBody
+@RestController
+@CrossOrigin
 @RequestMapping("/Data")
 public class getAnalycis {
 
