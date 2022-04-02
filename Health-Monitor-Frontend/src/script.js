@@ -57,7 +57,7 @@ function getAnalysis() {
     })
     .then((res) => (lock = false))
     .catch((err) => {
-      console.log(err)
+      window.alert(err)
       lock = false
     });
 }
