@@ -1,6 +1,8 @@
 package Bigdata.hadoop.mapReduce;
 
+import Bigdata.monitor.FileOperation;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -22,6 +24,8 @@ import java.util.Arrays;
 import java.util.Date;
 
 public class BetweenDate {
+    static FileOperation file = new FileOperation();
+    final static String ResultPath = "hdfs://localhost:9000/Results";
     public static class Map extends Mapper<LongWritable, Text, Text, Text> {
         private final Text key = new Text();
         private final Text value = new Text();
@@ -78,7 +82,7 @@ public class BetweenDate {
             }
             value.set(count + "," + CPU / count + "," + tPeakCpu + "," + Disk / count + "," + tPeakDisk + "," + Ram / count + "," + tPeakRam);
             context.write(key, value);
-            System.out.println("\n\n\n"+value);
+            System.out.println("\n\n\n" + value);
         }
     }
 
@@ -87,7 +91,9 @@ public class BetweenDate {
         return simpleDateFormat.parse(Day).getTime();
     }
 
-    public static void analyze(String fromDay, String toDay) throws Exception {
+    public static String analyze(String fromDay, String toDay) throws Exception {
+        FileSystem fileSystem = file.configureFileSystem();
+        file.DeleteFile(fileSystem, ResultPath);
         Configuration conf = new Configuration();
         conf.setLong("from", getTimeStamp(fromDay + " 00"));
         conf.setLong("to", getTimeStamp(toDay + " 24"));
@@ -102,9 +108,16 @@ public class BetweenDate {
         job.setOutputFormatClass(TextOutputFormat.class);
 
         FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Analysis"));
-        FileOutputFormat.setOutputPath(job, new Path("hdfs://localhost:9000/Results"));
-
+        FileOutputFormat.setOutputPath(job, new Path(ResultPath));
         job.waitForCompletion(true);
+        return getResults(fileSystem);
+    }
+
+    public static String getResults(FileSystem fileSystem) throws IOException {
+        String result = file.ReadFile(fileSystem, ResultPath + "/part-r-00000");
+        file.DeleteFile(fileSystem, ResultPath);
+        file.closeFileSystem(fileSystem);
+        return result;
     }
 
     public static void main(String[] args) throws Exception {

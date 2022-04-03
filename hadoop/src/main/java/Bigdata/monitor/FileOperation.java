@@ -53,6 +53,11 @@ public class FileOperation {
         bufferedWriter.close();
     }
 
+    public boolean DeleteFile(FileSystem fileSystem,String dest) throws IOException {
+        Path hdfsPath = new Path(dest);
+        return fileSystem.delete(hdfsPath,true);
+    }
+
     public String ReadFile(FileSystem fileSystem, String dest) throws IOException {
         Path hdfsReadPath = new Path(dest);
         FSDataInputStream inputStream = fileSystem.open(hdfsReadPath);

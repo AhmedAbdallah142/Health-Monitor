@@ -39,8 +39,8 @@ function getAnalysis() {
   }
 
   lock = true;
-
-  fetch(`http://localhost:8080/Data/getdata?from=${from}&to=${to}`)
+  datatable.innerHTML = "";
+  fetch(`http://localhost:8080/Data/getData?from=${from}&to=${to}`)
     .then((res) => {
       if (res.ok) return res.json();
       else {
@@ -49,7 +49,6 @@ function getAnalysis() {
       }
     })
     .then((result) => {
-      datatable.innerHTML = "";
       for (let res of result) {
         const row = datatable.insertRow();
         row.innerHTML = data_row(res);

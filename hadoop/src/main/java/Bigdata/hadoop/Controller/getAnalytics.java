@@ -1,7 +1,6 @@
 package Bigdata.hadoop.Controller;
 
 import Bigdata.hadoop.Service;
-import Bigdata.hadoop.getDataFile;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
@@ -14,20 +13,16 @@ import static Bigdata.hadoop.mapReduce.BetweenDate.analyze;
 @RestController
 @CrossOrigin
 @RequestMapping("/Data")
-public class getAnalycis {
+public class getAnalytics {
 
-    @GetMapping("/getdata")
+    @GetMapping("/getData")
     public List<Service> getTreeById(@RequestParam String from, @RequestParam String to) throws Exception {
-        analyze(from, to);
-        getDataFile res = new getDataFile();
-        String finalResult = res.getAllData();
+        String finalResult = analyze(from, to);
         String[] Ser = finalResult.split("\\n");
         List<Service> services = new ArrayList<>();
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-
-        for(int i = 0 ; i < Ser.length; i++){
-            String[] words = Ser[i].split("\\t");
+        for (String s : Ser) {
+            String[] words = s.split("\\t");
             Service re = new Service();
             re.Name = words[0];
 
@@ -35,14 +30,18 @@ public class getAnalycis {
 
             re.Count = data[0];
             re.meanCPU = data[1].substring(0, Math.min(6, data[1].length()));
-            re.peakCPU = simpleDateFormat.format(new Date(Long.parseLong(data[2])));
+            re.peakCPU = getDate(Long.parseLong(data[2]));
             re.meanDisk = data[3].substring(0, Math.min(6, data[3].length()));
-            re.peakDisk = simpleDateFormat.format(new Date(Long.parseLong(data[4])));
+            re.peakDisk = getDate(Long.parseLong(data[4]));
             re.meanRAM = data[5].substring(0, Math.min(6, data[5].length()));
-            re.peakRAM = simpleDateFormat.format(new Date(Long.parseLong(data[6])));
-
+            re.peakRAM = getDate(Long.parseLong(data[6]));
             services.add(re);
         }
         return services;
+    }
+    static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private static String getDate(Long timeStamp) {
+        timeStamp*=1000;
+        return simpleDateFormat.format(new Date(timeStamp));
     }
 }
