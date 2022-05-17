@@ -2,23 +2,30 @@ package Bigdata.MessageReceiver;
 
 import Bigdata.monitor.FileOperation;
 import org.apache.hadoop.fs.FileSystem;
+import org.json.CDL;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import static Bigdata.TimeConversion.getDay;
 
 public class Receiver {
-    final private static int maxMessages = 25000;
+    final private static int maxMessages = 100;//25000;
 
     private String currDate;
     private int messagesInBuffer = 0;
-    private final StringBuilder messagesBuffer;
-
+    //    private final JSONArray messagesBuffer;
+    private final Map<String, JSONArray> messagesBuffer;
     // hdfs time
     private double hdfsWriteTimeAvg = 0;
     private long n_batches = 0L;
@@ -30,9 +37,10 @@ public class Receiver {
     private double endToEndDelayAvg = 0;
     private long rcvTimeSum = 0L;
 
-    public Receiver () {
+    public Receiver() {
         currDate = getDate();
-        messagesBuffer = new StringBuilder();
+//        messagesBuffer = new JSONArray();
+        messagesBuffer = new HashMap<>();
     }
 
     public void runServer(int port) throws IOException {
@@ -42,8 +50,7 @@ public class Receiver {
 
         System.out.println("[+] Server is running at port " + port);
         startTime = System.nanoTime();
-        while (true)
-        {
+        while (true) {
             packet = new DatagramPacket(received, received.length);
             socket.receive(packet);
 
@@ -55,22 +62,35 @@ public class Receiver {
     }
 
     public void handleReceived(byte[] data) throws IOException {
-        if(!getDate().equals(currDate)) {
+        if (!getDate().equals(currDate)) {
             sendBatch();
             currDate = getDate();
         }
 
         int JSON_start = 0, JSON_end;
         // read messages one by one
-        while((JSON_end = matchJSON(data, JSON_start)) != -1) {
+        while ((JSON_end = matchJSON(data, JSON_start)) != -1) {
             // parse to JSON Object
+
             byte[] message = Arrays.copyOfRange(data, JSON_start, JSON_end);
-            String messageStr = new String(message);
+//            String messageStr = new String(message);
 
             // catch if parse failed
             try {
-                JSONObject obj = new JSONObject(messageStr);
-                messagesBuffer.append(obj).append("\n");
+//                JSONObject obj = new JSONObject(messageStr);
+                JSONObject obj = new JSONObject(new String(message));
+                String day = getDay(obj.getLong("Timestamp"));
+                if (messagesBuffer.containsKey(day))
+                    messagesBuffer.get(day).put(obj);
+                else{
+                    JSONArray arr = new JSONArray();
+                    arr.put(obj);
+                    messagesBuffer.put(day, arr);
+                }
+
+
+//                messagesBuffer.put(obj);
+//                messagesBuffer.append(obj).append("\n");
                 ++messagesInBuffer;
 
 //                if(messagesInBuffer % 128 == 0) {
@@ -82,9 +102,9 @@ public class Receiver {
 //                }
 
                 JSON_start = JSON_end;
-            }
-            catch (RuntimeException e) {
+            } catch (RuntimeException e) {
                 System.out.println("Failed to save message:\n" + e.getMessage());
+                e.printStackTrace();
                 break;
             }
 
@@ -94,16 +114,16 @@ public class Receiver {
     }
 
     private int matchJSON(byte[] msg, int start) {
-        if(start >= msg.length || msg[start] != '{')
+        if (start >= msg.length || msg[start] != '{')
             return -1;
 
         int i = start + 1, bracketCount = 1;
-        while(i < msg.length && bracketCount > 0) {
-            if(msg[i] == '{')
+        while (i < msg.length && bracketCount > 0) {
+            if (msg[i] == '{')
                 ++bracketCount;
-            else if(msg[i] == '}')
+            else if (msg[i] == '}')
                 --bracketCount;
-            else if(msg[i] == 0)
+            else if (msg[i] == 0)
                 return -1;
             ++i;
         }
@@ -111,14 +131,18 @@ public class Receiver {
         return bracketCount == 0 ? i : -1;
     }
 
-    private void sendBatch () throws IOException {
-        String hdfsFilePath = "hdfs://localhost:9000/Logs/" + currDate + ".log";
+    private void sendBatch() throws IOException {
+
 
         long tec = System.nanoTime();
 
         FileOperation file = new FileOperation();
         FileSystem fileSystem = file.configureFileSystem();
-        System.out.println(file.AddLogFile(fileSystem,messagesBuffer.toString(),hdfsFilePath));
+        for (String day : messagesBuffer.keySet()){
+            String hdfsFilePath = "hdfs://localhost:9000/Check/" + day + ".csv";
+            System.out.println(file.AddLogFile(fileSystem, CDL.toString(messagesBuffer.get(day)), hdfsFilePath));
+        }
+
 //        file.ReadFile(fileSystem,hdfsFilePath);
         file.closeFileSystem(fileSystem);
 //        try {
@@ -146,7 +170,8 @@ public class Receiver {
         ++n_batches;
 
         // reset
-        messagesBuffer.delete(0, messagesBuffer.length());
+//        messagesBuffer.delete(0, messagesBuffer.length());
+        messagesBuffer.clear();
         messagesInBuffer = 0;
         rcvTimeSum = 0L;
         startTime = System.nanoTime();
@@ -157,7 +182,11 @@ public class Receiver {
                 .now(ZoneOffset.UTC)
                 .format(DateTimeFormatter.ofPattern("dd_MM_yyyy"));
     }
-
+    public static String getDay(long timeStamp) {
+        timeStamp *= 1000;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        return simpleDateFormat.format(timeStamp);
+    }
 
     public static void main(String[] args) throws IOException {
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");

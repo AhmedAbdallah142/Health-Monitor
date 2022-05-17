@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="hadoop" target="18" />
+      <module name="hadoop" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

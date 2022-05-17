@@ -22,7 +22,8 @@ public class Client {
 
             int n = 141;
             for(int i = 0 ; i < n ; i++) {
-                File myObj = new File("data/health_"+(i)+".json");
+//                File myObj = new File("data/health_"+(i)+".json");
+                File myObj = new File("input/data.log");
                 String object = "";
                 FileReader fr = new FileReader(myObj);
                 int content;
@@ -42,7 +43,7 @@ public class Client {
 //                        Thread.sleep(0);
                     }
                 }
-                System.out.println("\n\n\n\n\n\n\n\n\n"+i+"\n\n\n\n\n\n\n\n\n");
+//                System.out.println("\n\n\n\n\n\n\n\n\n"+i+"\n\n\n\n\n\n\n\n\n");
 //                Thread.sleep(5);
             }
         } catch (SocketTimeoutException ex) {

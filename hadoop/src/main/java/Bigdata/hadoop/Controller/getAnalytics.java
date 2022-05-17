@@ -22,12 +22,13 @@ public class getAnalytics {
         List<Service> services = new ArrayList<>();
 
         for (String s : Ser) {
+            if(s.length() < 1)
+                break;
             String[] words = s.split("\\t");
             Service re = new Service();
             re.Name = words[0];
 
             String[] data = words[1].split(",");
-
             re.Count = data[0];
             re.meanCPU = data[1].substring(0, Math.min(6, data[1].length()));
             re.peakCPU = getDate(Long.parseLong(data[2]));
