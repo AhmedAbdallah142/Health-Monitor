@@ -21,9 +21,9 @@ public class Duck_db {
         // day2 -> end  {minutes}
 
         Class.forName("org.duckdb.DuckDBDriver");
-        Connection conn = DriverManager.getConnection("jdbc:duckdb:");
+        Connection conn = DriverManager.getConnection("jdbc:duckdb:hdfs://localhost:9000/Analysis");
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '"+start+"' AND '"+end+"'");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM 'Day/Day-r-00000.snappy.parquet' WHERE time BETWEEN '"+start+"' AND '"+end+"'");
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnsNumber = rsmd.getColumnCount();
         while (rs.next()) {
