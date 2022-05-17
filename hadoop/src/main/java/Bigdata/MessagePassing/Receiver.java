@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Receiver {
-    final private static int maxMessages = 100;//25000;
+    final private static int maxMessages = 300;//25000;
 
     private String currDate;
     private int messagesInBuffer = 0;
@@ -137,7 +137,7 @@ public class Receiver {
         FileOperation file = new FileOperation();
         FileSystem fileSystem = file.configureFileSystem();
         for (String day : messagesBuffer.keySet()){
-            String hdfsFilePath = "hdfs://localhost:9000/Check/" + day + ".csv";
+            String hdfsFilePath = "hdfs://localhost:9000/Logs/" + day + ".csv";
             System.out.println(file.AddLogFile(fileSystem, CDL.toString(messagesBuffer.get(day).getJSONObject(0).names(), messagesBuffer.get(day)), hdfsFilePath));
         }
 

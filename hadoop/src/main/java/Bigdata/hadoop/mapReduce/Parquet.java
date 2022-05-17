@@ -156,7 +156,7 @@ public class Parquet extends Configured implements Tool {
         job.setOutputFormatClass(TextOutputFormat.class);
         LazyOutputFormat.setOutputFormatClass(job, TextOutputFormat.class);
 
-        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Check/20231022.csv"));
+        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Logs"));
         ParquetOutputFormat.setOutputPath(job, new Path("hdfs://localhost:9000/Analysis"));
 
         MultipleOutputs.addNamedOutput(job, "Day", AvroParquetOutputFormat.class, Void.class, Void.class);

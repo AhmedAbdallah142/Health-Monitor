@@ -22,31 +22,31 @@ public class Client {
             System.out.println(address.getHostAddress());
             DatagramSocket socket = new DatagramSocket();
 
-            int n = 141;
+            int n = 1;
             for(int i = 0 ; i < n ; i++) {
 //                File myObj = new File("data/health_"+(i)+".json");
-                File myObj = new File("input/data.log");
-                String object = "";
+                File myObj = new File("health_141.json");
+                StringBuilder object = new StringBuilder();
                 FileReader fr = new FileReader(myObj);
                 int content;
                 while ((content = fr.read()) != -1) {
-                    object += (char) content;
-                    if (object.length() > 3 && object.contains("}{")) {
-                        object = object.substring(0, object.length() - 1);
-                        JSONObject massage = new JSONObject(object);
+                    object.append((char) content);
+                    if (object.length() > 3 && object.toString().contains("}{")) {
+                        object = new StringBuilder(object.substring(0, object.length() - 1));
+                        JSONObject massage = new JSONObject(object.toString());
 //                        System.out.println(massage.toString());
-                        byte buf[] = null;
+                        byte[] buf = null;
 
-                        Long date = massage.getLong("Timestamp");
-                        Long t_current = System.currentTimeMillis();
-                        if(date<t_current){
+                        long date = massage.getLong("Timestamp");
+                        long t_current = System.currentTimeMillis();
+//                        if(date < t_current/1000){
                             buf = massage.toString().getBytes();
 //                        DatagramPacket DpSend =
 //                                new DatagramPacket(buf, buf.length, address, 3500);
 //                        socket.send(DpSend);
                             r.handleReceived(buf);
-                        }
-                        object = "{";
+//                        }
+                        object = new StringBuilder("{");
 //                        Thread.sleep(0);
                     }
                 }
