@@ -6,6 +6,9 @@ import java.io.File;
 
 import java.io.FileReader;
 import java.net.*;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class Client {
@@ -33,11 +36,19 @@ public class Client {
                         JSONObject massage = new JSONObject(object);
 //                        System.out.println(massage.toString());
                         byte buf[] = null;
-                        buf = massage.toString().getBytes();
+
+                        String date = massage.getString("date");
+                        Timestamp t = Timestamp.valueOf(date);
+                        SimpleDateFormat current = new SimpleDateFormat("yyyy.MM.dd.HH:mm:ss");
+                        String timeStamp = current.format(new Date());
+                        Timestamp t_current = Timestamp.valueOf(timeStamp);
+                        if(t.before(t_current)){
+                            buf = massage.toString().getBytes();
 //                        DatagramPacket DpSend =
 //                                new DatagramPacket(buf, buf.length, address, 3500);
 //                        socket.send(DpSend);
-                        r.handleReceived(buf);
+                            r.handleReceived(buf);
+                        }
                         object = "{";
 //                        Thread.sleep(0);
                     }
