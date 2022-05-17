@@ -20,12 +20,11 @@ import org.apache.hadoop.util.ToolRunner;
 import org.apache.parquet.avro.AvroParquetOutputFormat;
 import org.apache.parquet.hadoop.ParquetOutputFormat;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.ParseException;
 
-import static Bigdata.TimeConversion.*;
+import static Bigdata.monitor.TimeConversion.*;
 
 public class Parquet extends Configured implements Tool {
     private static final Schema AVRO_SCHEMA = new Schema.Parser().parse(
@@ -157,7 +156,7 @@ public class Parquet extends Configured implements Tool {
         job.setOutputFormatClass(TextOutputFormat.class);
         LazyOutputFormat.setOutputFormatClass(job, TextOutputFormat.class);
 
-        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Check"));
+        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Check/20231022.csv"));
         ParquetOutputFormat.setOutputPath(job, new Path("hdfs://localhost:9000/Analysis"));
 
         MultipleOutputs.addNamedOutput(job, "Day", AvroParquetOutputFormat.class, Void.class, Void.class);

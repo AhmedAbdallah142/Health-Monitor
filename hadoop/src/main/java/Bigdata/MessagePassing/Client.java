@@ -1,11 +1,10 @@
-package Bigdata.MessageReceiver;
+package Bigdata.MessagePassing;
 
 import org.json.JSONObject;
 
 import java.io.File;
 
 import java.io.FileReader;
-import java.io.IOException;
 import java.net.*;
 
 

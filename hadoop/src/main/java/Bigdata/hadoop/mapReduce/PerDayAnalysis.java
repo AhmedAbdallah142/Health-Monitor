@@ -25,14 +25,15 @@ public class PerDayAnalysis {
         final String DELIMITER = ",";
         public void map(LongWritable longWritable, Text text, Context context) throws IOException, InterruptedException {
             try {
-                String[] data = text.toString().split(DELIMITER);
-                StringBuilder result = new StringBuilder();
-//                key.set(getDate(Long.parseLong(data[2]))+data[1]);
-                result.append(data[0]).append(",").append(Double.parseDouble(data[3].substring(8)) / Double.parseDouble(data[4].substring(5,data[4].length()-2)))
-                        .append(",").append(Double.parseDouble(data[5].substring(8)) / Double.parseDouble(data[6].substring(5,data[6].length()-2)))
-                        .append(",").append(data[2]);
-
-                System.out.println(data[5].substring(8));
+                System.out.println(text);
+//                String[] data = text.toString().split(DELIMITER);
+//                StringBuilder result = new StringBuilder();
+////                key.set(getDate(Long.parseLong(data[2]))+data[1]);
+//                result.append(data[0]).append(",").append(Double.parseDouble(data[3].substring(8)) / Double.parseDouble(data[4].substring(5,data[4].length()-2)))
+//                        .append(",").append(Double.parseDouble(data[5].substring(8)) / Double.parseDouble(data[6].substring(5,data[6].length()-2)))
+//                        .append(",").append(data[2]);
+//
+//                System.out.println(data[5].substring(8));
 //                value.set(result.toString());
 //                context.write(key, value);
             }catch (Exception e){
@@ -59,7 +60,7 @@ public class PerDayAnalysis {
 //        FileOutputFormat.setOutputPath(job, new Path("hdfs://localhost:9000/Analysis"));
         MultipleOutputs.addNamedOutput(job, "Day", TextOutputFormat.class, Text.class, Text.class);
         MultipleOutputs.addNamedOutput(job, "Min", TextOutputFormat.class, Text.class, Text.class);
-        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Check"));
+        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Check/20231022.csv"));
         FileOutputFormat.setOutputPath(job, new Path("analysis"));
         job.waitForCompletion(true);
     }

@@ -1,4 +1,4 @@
-package Bigdata.MessageReceiver;
+package Bigdata.MessagePassing;
 
 import Bigdata.monitor.FileOperation;
 import org.apache.hadoop.fs.FileSystem;
@@ -16,8 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import static Bigdata.TimeConversion.getDay;
 
 public class Receiver {
     final private static int maxMessages = 100;//25000;

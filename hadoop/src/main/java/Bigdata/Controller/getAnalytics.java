@@ -1,6 +1,5 @@
-package Bigdata.hadoop.Controller;
+package Bigdata.Controller;
 
-import Bigdata.hadoop.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
