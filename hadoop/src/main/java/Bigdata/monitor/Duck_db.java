@@ -21,9 +21,9 @@ public class Duck_db {
         // day2 -> end  {minutes}
 
         Class.forName("org.duckdb.DuckDBDriver");
-        Connection conn = DriverManager.getConnection("jdbc:duckdb:hdfs://localhost:9000/Analysis");
+        Connection conn = DriverManager.getConnection("jdbc:duckdb:");
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM 'Day/Day-r-00000.snappy.parquet' WHERE time BETWEEN '"+start+"' AND '"+end+"'");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM 'localhost:9000/Analysis/Day/Day-r-00000.snappy.parquet'");
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnsNumber = rsmd.getColumnCount();
         while (rs.next()) {
@@ -34,5 +34,11 @@ public class Duck_db {
             }
             System.out.println("");
         }
+    }
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+        System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
+        System.setProperty("HADOOP_USER_NAME", "hadoopuser");
+        Timestamp t= new Timestamp(192992929);
+        query(t,t);
     }
 }
