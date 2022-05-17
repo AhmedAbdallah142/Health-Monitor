@@ -52,20 +52,17 @@ public class Parquet extends Configured implements Tool {
     public static class Map extends Mapper<LongWritable, Text, Text, Text> {
         private final Text key = new Text();
         private final Text value = new Text();
+        final String DELIMITER = ",";
 
         public void map(LongWritable longWritable, Text text, Context context) throws IOException, InterruptedException {
             try {
-                JSONObject item = new JSONObject(text.toString());
-                StringBuilder result = new StringBuilder();
-                JSONObject Disk = item.getJSONObject("Disk");
-                JSONObject Ram = item.getJSONObject("RAM");
-                result.append(item.getDouble("CPU")).append(",").append(Disk.getDouble("Free") / Disk.getDouble("Total"))
-                        .append(",").append(Ram.getDouble("Free") / Ram.getDouble("Total"))
-                        .append(",").append(item.getLong("Timestamp"));
-                value.set(result.toString());
-                key.set(getDay(item.getLong("Timestamp")) + "," + item.getString("serviceName"));
+                String[] data = text.toString().split(DELIMITER);
+                value.set(data[0] + "," + Double.parseDouble(data[3].substring(8)) / Double.parseDouble(data[4].substring(5, data[4].length() - 2)) +
+                        "," + Double.parseDouble(data[5].substring(8)) / Double.parseDouble(data[6].substring(5, data[6].length() - 2)) +
+                        "," + data[2]);
+                key.set(getDay(Long.parseLong(data[2]))+data[1]);
                 context.write(key, value);
-                key.set(getMin(item.getLong("Timestamp")) + "," + item.getString("serviceName"));
+                key.set(getMin(Long.parseLong(data[2]))+data[1]);
                 context.write(key, value);
             } catch (Exception e) {
                 System.out.println(text);
@@ -160,7 +157,7 @@ public class Parquet extends Configured implements Tool {
         job.setOutputFormatClass(TextOutputFormat.class);
         LazyOutputFormat.setOutputFormatClass(job, TextOutputFormat.class);
 
-        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Logs"));
+        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Check"));
         ParquetOutputFormat.setOutputPath(job, new Path("hdfs://localhost:9000/Analysis"));
 
         MultipleOutputs.addNamedOutput(job, "Day", AvroParquetOutputFormat.class, Void.class, Void.class);

@@ -140,7 +140,7 @@ public class Receiver {
         FileSystem fileSystem = file.configureFileSystem();
         for (String day : messagesBuffer.keySet()){
             String hdfsFilePath = "hdfs://localhost:9000/Check/" + day + ".csv";
-            System.out.println(file.AddLogFile(fileSystem, CDL.toString(messagesBuffer.get(day)), hdfsFilePath));
+            System.out.println(file.AddLogFile(fileSystem, CDL.toString(messagesBuffer.get(day).getJSONObject(0).names(), messagesBuffer.get(day)), hdfsFilePath));
         }
 
 //        file.ReadFile(fileSystem,hdfsFilePath);
