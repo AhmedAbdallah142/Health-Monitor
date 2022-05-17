@@ -37,12 +37,9 @@ public class Client {
 //                        System.out.println(massage.toString());
                         byte buf[] = null;
 
-                        String date = massage.getString("date");
-                        Timestamp t = Timestamp.valueOf(date);
-                        SimpleDateFormat current = new SimpleDateFormat("yyyy.MM.dd.HH:mm:ss");
-                        String timeStamp = current.format(new Date());
-                        Timestamp t_current = Timestamp.valueOf(timeStamp);
-                        if(t.before(t_current)){
+                        Long date = massage.getLong("Timestamp");
+                        Long t_current = System.currentTimeMillis();
+                        if(date<t_current){
                             buf = massage.toString().getBytes();
 //                        DatagramPacket DpSend =
 //                                new DatagramPacket(buf, buf.length, address, 3500);
