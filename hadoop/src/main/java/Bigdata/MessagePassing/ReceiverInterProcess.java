@@ -135,14 +135,13 @@ public class ReceiverInterProcess {
         long tec = System.nanoTime();
 
         FileOperation file = new FileOperation();
-        FileSystem fileSystem = file.configureFileSystem();
         for (String day : messagesBuffer.keySet()){
             String hdfsFilePath = "hdfs://localhost:9000/Logs/" + day + ".csv";
-            System.out.println(file.AddLogFile(fileSystem, CDL.toString(messagesBuffer.get(day).getJSONObject(0).names(), messagesBuffer.get(day)), hdfsFilePath));
+            System.out.println(file.AddLogFile(CDL.toString(messagesBuffer.get(day).getJSONObject(0).names(), messagesBuffer.get(day)), hdfsFilePath));
         }
 
 //        file.ReadFile(fileSystem,hdfsFilePath);
-        file.closeFileSystem(fileSystem);
+        file.closeFileSystem();
 //        try {
 //            Thread.sleep((int) (1000 * Math.random()));
 //        } catch (InterruptedException e) {

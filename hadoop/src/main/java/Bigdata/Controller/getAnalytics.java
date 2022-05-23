@@ -15,16 +15,16 @@ import static Bigdata.hadoop.mapReduce.BetweenDate.analyze;
 public class getAnalytics {
 
     @GetMapping("/getData")
-    public List<Service> getTreeById(@RequestParam String from, @RequestParam String to) throws Exception {
+    public List<serviceModel> getTreeById(@RequestParam String from, @RequestParam String to) throws Exception {
         String finalResult = analyze(from, to);
         String[] Ser = finalResult.split("\\n");
-        List<Service> services = new ArrayList<>();
+        List<serviceModel> services = new ArrayList<>();
 
         for (String s : Ser) {
             if(s.length() < 1)
                 break;
             String[] words = s.split("\\t");
-            Service re = new Service();
+            serviceModel re = new serviceModel();
             re.Name = words[0];
 
             String[] data = words[1].split(",");

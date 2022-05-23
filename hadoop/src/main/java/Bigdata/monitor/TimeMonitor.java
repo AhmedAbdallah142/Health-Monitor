@@ -2,9 +2,18 @@ package Bigdata.monitor;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-public class TimeConversion {
+public class TimeMonitor {
+
+    public static String getDate() {
+        return LocalDateTime
+                .now(ZoneOffset.UTC)
+                .format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    }
     public static String getDay(long timeStamp) {
         timeStamp *= 1000;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(":yyyyMMdd");

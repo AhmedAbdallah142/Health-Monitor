@@ -2,7 +2,6 @@ package Bigdata.hadoop.mapReduce;
 
 import Bigdata.monitor.FileOperation;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -87,8 +86,7 @@ public class BetweenDate {
     }
 
     public static String analyze(String fromDay, String toDay) throws Exception {
-        FileSystem fileSystem = file.configureFileSystem();
-        file.DeleteFile(fileSystem, ResultPath);
+        file.DeleteFile(ResultPath);
         Configuration conf = new Configuration();
         conf.setLong("from", getTimeStamp(fromDay + " 00"));
         conf.setLong("to", getTimeStamp(toDay + " 24"));
@@ -105,13 +103,13 @@ public class BetweenDate {
         FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Analysis"));
         FileOutputFormat.setOutputPath(job, new Path(ResultPath));
         job.waitForCompletion(true);
-        return getResults(fileSystem);
+        return getResults();
     }
 
-    public static String getResults(FileSystem fileSystem) throws IOException {
-        String result = file.ReadFile(fileSystem, ResultPath + "/part-r-00000");
-        file.DeleteFile(fileSystem, ResultPath);
-        file.closeFileSystem(fileSystem);
+    public static String getResults() throws IOException {
+        String result = file.ReadFile(ResultPath + "/part-r-00000");
+        file.DeleteFile(ResultPath);
+        file.closeFileSystem();
         return result;
     }
 

@@ -1,7 +1,7 @@
 package Bigdata.MessagePassing;
 
 import Bigdata.monitor.FileOperation;
-import org.apache.hadoop.fs.FileSystem;
+import Bigdata.monitor.TimeMonitor;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -10,15 +10,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
-public class Receiver {
-    final private static int maxMessages = 300;//25000;
+public class Server {
+    final private static int maxMessages = 128;//25000;
 
     private String currDate;
     private int messagesInBuffer = 0;
@@ -35,8 +30,8 @@ public class Receiver {
     private double endToEndDelayAvg = 0;
     private long rcvTimeSum = 0L;
 
-    public Receiver() {
-        currDate = getDate();
+    public Server() {
+        currDate = TimeMonitor.getDate();
         messagesBuffer = new JSONArray();
     }
 
@@ -59,9 +54,9 @@ public class Receiver {
     }
 
     public void handleReceived(byte[] data) throws IOException {
-        if (!getDate().equals(currDate)) {
+        if (!TimeMonitor.getDate().equals(currDate)) {
             sendBatch();
-            currDate = getDate();
+            currDate = TimeMonitor.getDate();
         }
 
         int JSON_start = 0, JSON_end;
@@ -117,12 +112,11 @@ public class Receiver {
     private void sendBatch() throws IOException {
         long tec = System.nanoTime();
         FileOperation file = new FileOperation();
-        FileSystem fileSystem = file.configureFileSystem();
-        String hdfsFilePath = "hdfs://localhost:9000/Logs/" + getDay(System.currentTimeMillis()) + ".csv";
-        System.out.println(file.AddLogFile(fileSystem, CDL.toString(messagesBuffer.getJSONObject(0).names(), messagesBuffer), hdfsFilePath));
+        String hdfsFilePath = "hdfs://localhost:9000/Logs/" + currDate + ".csv";
+        System.out.println(file.AddLogFile(CDL.toString(messagesBuffer.getJSONObject(0).names(), messagesBuffer), hdfsFilePath));
 
 //        file.ReadFile(fileSystem,hdfsFilePath);
-        file.closeFileSystem(fileSystem);
+        file.closeFileSystem();
 //        try {
 //            Thread.sleep((int) (1000 * Math.random()));
 //        } catch (InterruptedException e) {
@@ -155,11 +149,6 @@ public class Receiver {
         startTime = System.nanoTime();
     }
 
-    private String getDate() {
-        return LocalDateTime
-                .now(ZoneOffset.UTC)
-                .format(DateTimeFormatter.ofPattern("dd_MM_yyyy"));
-    }
     public static String getDay(long timeStamp) {
         timeStamp *= 1000;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -169,7 +158,7 @@ public class Receiver {
     public static void main(String[] args) throws IOException {
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
         System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
-        Receiver r = new Receiver();
+        Server r = new Server();
         r.runServer(3500);
     }
 }

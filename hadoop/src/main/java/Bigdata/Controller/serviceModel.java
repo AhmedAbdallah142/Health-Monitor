@@ -1,5 +1,5 @@
 package Bigdata.Controller;
 
-public class Service {
+public class serviceModel {
     public String Name, Count, meanCPU, peakCPU, meanDisk, peakDisk, meanRAM, peakRAM;
 }

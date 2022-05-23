@@ -24,37 +24,38 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import java.io.IOException;
 import java.text.ParseException;
 
-import static Bigdata.monitor.TimeConversion.*;
+import static Bigdata.monitor.TimeMonitor.*;
 
-public class AnalysisBatchView extends Configured implements Tool {
+public class Analysis extends Configured implements Tool {
     private static final Schema AVRO_SCHEMA = new Schema.Parser().parse(
-            "{\n" +
-                    "	\"type\":	\"record\",\n" +
-                    "	\"name\":	\"testFile\",\n" +
-                    "	\"doc\":	\"test records\",\n" +
-                    "	\"fields\":\n" +
-                    "	[\n" +
-                    "			{\"name\":	\"service\", \"type\":	\"string\"},\n" +
-                    "			{\"name\":	\"time\", \"type\": {\"type\": \"long\",\"logicalType\": \"timestamp-millis\"}},\n" +
-                    "			{\"name\": \"count\",	\"type\":	\"long\"},\n" +
-                    "			{\"name\":	\"ACpu\", \"type\":	\"double\"},\n" +
-                    "			{\"name\":	\"PCpu\", \"type\":	\"double\"},\n" +
-                    "			{\"name\":	\"TCpu\", \"type\": {\"type\": \"long\",\"logicalType\": \"timestamp-millis\"}},\n" +
-                    "			{\"name\":	\"ADisk\", \"type\":	\"double\"},\n" +
-                    "			{\"name\":	\"PDisk\", \"type\":	\"double\"},\n" +
-                    "			{\"name\":	\"TDisk\", \"type\": {\"type\": \"long\",\"logicalType\": \"timestamp-millis\"}}," +
-                    "			{\"name\":	\"ARam\", \"type\":	\"double\"},\n" +
-                    "			{\"name\":	\"PRam\", \"type\":	\"double\"},\n" +
-                    "			{\"name\":	\"TRam\", \"type\": {\"type\": \"long\",\"logicalType\": \"timestamp-millis\"}}\n" +
-                    "	]\n" +
-                    "}\n");
+            """
+                    {
+                    	"type":	"record",
+                    	"name":	"testFile",
+                    	"doc":	"test records",
+                    	"fields":
+                    	[
+                    			{"name":	"service", "type":	"string"},
+                    			{"name":	"time", "type": {"type": "long","logicalType": "timestamp-millis"}},
+                    			{"name":    "count",	"type":	"long"},
+                    			{"name":	"ACpu", "type":	"double"},
+                    			{"name":	"PCpu", "type":	"double"},
+                    			{"name":	"TCpu", "type": {"type": "long","logicalType": "timestamp-millis"}},
+                    			{"name":	"ADisk", "type":	"double"},
+                    			{"name":	"PDisk", "type":	"double"},
+                    			{"name":	"TDisk", "type": {"type": "long","logicalType": "timestamp-millis"}},
+                    			{"name":	"ARam", "type":	"double"},
+                    			{"name":	"PRam", "type":	"double"},
+                    			{"name":	"TRam", "type": {"type": "long","logicalType": "timestamp-millis"}}
+                    	]
+                    }
+                    """);
     public static class Map extends Mapper<LongWritable, Text, Text, Text> {
         private final Text key = new Text();
         private final Text value = new Text();
         final String DELIMITER = ",";
 
         public void map(LongWritable longWritable, Text text, Context context) throws IOException, InterruptedException {
-            try {
                 String[] data = text.toString().split(DELIMITER);
                 value.set(data[0] + "," + Double.parseDouble(data[3].substring(8)) / Double.parseDouble(data[4].substring(5, data[4].length() - 2)) +
                         "," + Double.parseDouble(data[5].substring(8)) / Double.parseDouble(data[6].substring(5, data[6].length() - 2)) +
@@ -63,10 +64,6 @@ public class AnalysisBatchView extends Configured implements Tool {
                 context.write(key, value);
                 key.set(getMin(Long.parseLong(data[2]))+data[1]);
                 context.write(key, value);
-            } catch (Exception e) {
-                System.out.println(text);
-                e.printStackTrace();
-            }
         }
     }
 
@@ -146,7 +143,7 @@ public class AnalysisBatchView extends Configured implements Tool {
     @Override
     public int run(String[] strings) throws Exception {
         Job job = Job.getInstance(getConf(), "Analysis Parquet Batch");
-        job.setJarByClass(AnalysisBatchView.class);
+        job.setJarByClass(Analysis.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
@@ -156,8 +153,8 @@ public class AnalysisBatchView extends Configured implements Tool {
         job.setOutputFormatClass(TextOutputFormat.class);
         LazyOutputFormat.setOutputFormatClass(job, TextOutputFormat.class);
 
-        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/Logs"));
-        ParquetOutputFormat.setOutputPath(job, new Path("hdfs://localhost:9000/Analysis"));
+        FileInputFormat.addInputPath(job, new Path("hdfs://localhost:9000/"+strings[0]));
+        ParquetOutputFormat.setOutputPath(job, new Path("hdfs://localhost:9000/"+strings[1]));
 
         MultipleOutputs.addNamedOutput(job, "Day", AvroParquetOutputFormat.class, Void.class, Void.class);
         MultipleOutputs.addNamedOutput(job, "Min", AvroParquetOutputFormat.class, Void.class, Void.class);
@@ -170,7 +167,7 @@ public class AnalysisBatchView extends Configured implements Tool {
     public static void main(String[] args) throws Exception {
         System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
-        int exitFlag = ToolRunner.run(new AnalysisBatchView(), args);
+        int exitFlag = ToolRunner.run(new Analysis(), args);
         System.exit(exitFlag);
     }
 }

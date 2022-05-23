@@ -19,11 +19,11 @@ public class Duck_db {
         // start -> night1  {minutes}
         // night1 -> day2  {days}
         // day2 -> end  {minutes}
-        System.setProperty("fs.defaultFS","hdfs://localhost:9000");
+        System.setProperty("fs.default.name","hdfs://localhost:9000");
         Class.forName("org.duckdb.DuckDBDriver");
         Connection conn = DriverManager.getConnection("jdbc:duckdb:");
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM 'Day.parquet'");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM 'https://github.com/Teradata/kylo/blob/master/samples/sample-data/parquet/userdata1.parquet'");
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnsNumber = rsmd.getColumnCount();
         while (rs.next()) {
@@ -40,5 +40,11 @@ public class Duck_db {
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
         Timestamp t= new Timestamp(192992929);
         query(t,t);
+
+//        Class.forName("org.duckdb.DuckDBDriver");
+//        Connection conn = DriverManager.getConnection("jdbc:duckdb:");
+//        Statement stmt = conn.createStatement();
+//        stmt.execute("INSTALL httpfs;");
+//        stmt.execute("LOAD httpfs;");
     }
 }

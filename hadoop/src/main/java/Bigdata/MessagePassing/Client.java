@@ -6,9 +6,6 @@ import java.io.File;
 
 import java.io.FileReader;
 import java.net.*;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class Client {
@@ -16,16 +13,16 @@ public class Client {
     public static void main(String[] args) {
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
         System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
-        Receiver r = new Receiver();
+        Server r = new Server();
         try {
             InetAddress address = InetAddress.getByName("localhost");
             System.out.println(address.getHostAddress());
             DatagramSocket socket = new DatagramSocket();
 
-            int n = 1;
+            int n = 141;
             for(int i = 0 ; i < n ; i++) {
-//                File myObj = new File("data/health_"+(i)+".json");
-                File myObj = new File("health_141.json");
+                File myObj = new File("/media/ahmed/ESD-ISO/health_data/health_"+(i)+".json");
+//                File myObj = new File("health_141.json");
                 StringBuilder object = new StringBuilder();
                 FileReader fr = new FileReader(myObj);
                 int content;
