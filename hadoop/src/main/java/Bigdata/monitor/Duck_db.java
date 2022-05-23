@@ -19,11 +19,11 @@ public class Duck_db {
         // start -> night1  {minutes}
         // night1 -> day2  {days}
         // day2 -> end  {minutes}
-
+        System.setProperty("fs.defaultFS","hdfs://localhost:9000");
         Class.forName("org.duckdb.DuckDBDriver");
         Connection conn = DriverManager.getConnection("jdbc:duckdb:");
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM 'localhost:9000/Analysis/Day/Day-r-00000.snappy.parquet'");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM 'Day.parquet'");
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnsNumber = rsmd.getColumnCount();
         while (rs.next()) {

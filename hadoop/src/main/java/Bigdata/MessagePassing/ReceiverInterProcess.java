@@ -17,13 +17,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Receiver {
+public class ReceiverInterProcess {
     final private static int maxMessages = 300;//25000;
 
     private String currDate;
     private int messagesInBuffer = 0;
     //    private final JSONArray messagesBuffer;
-    private final JSONArray messagesBuffer;
+    private final Map<String, JSONArray> messagesBuffer;
     // hdfs time
     private double hdfsWriteTimeAvg = 0;
     private long n_batches = 0L;
@@ -35,9 +35,10 @@ public class Receiver {
     private double endToEndDelayAvg = 0;
     private long rcvTimeSum = 0L;
 
-    public Receiver() {
+    public ReceiverInterProcess() {
         currDate = getDate();
-        messagesBuffer = new JSONArray();
+//        messagesBuffer = new JSONArray();
+        messagesBuffer = new HashMap<>();
     }
 
     public void runServer(int port) throws IOException {
@@ -70,10 +71,24 @@ public class Receiver {
             // parse to JSON Object
 
             byte[] message = Arrays.copyOfRange(data, JSON_start, JSON_end);
+//            String messageStr = new String(message);
 
             // catch if parse failed
             try {
-                messagesBuffer.put(new JSONObject(new String(message)));
+//                JSONObject obj = new JSONObject(messageStr);
+                JSONObject obj = new JSONObject(new String(message));
+                String day = getDay(obj.getLong("Timestamp"));
+                if (messagesBuffer.containsKey(day))
+                    messagesBuffer.get(day).put(obj);
+                else{
+                    JSONArray arr = new JSONArray();
+                    arr.put(obj);
+                    messagesBuffer.put(day, arr);
+                }
+
+
+//                messagesBuffer.put(obj);
+//                messagesBuffer.append(obj).append("\n");
                 ++messagesInBuffer;
 
 //                if(messagesInBuffer % 128 == 0) {
@@ -115,11 +130,16 @@ public class Receiver {
     }
 
     private void sendBatch() throws IOException {
+
+
         long tec = System.nanoTime();
+
         FileOperation file = new FileOperation();
         FileSystem fileSystem = file.configureFileSystem();
-        String hdfsFilePath = "hdfs://localhost:9000/Logs/" + getDay(System.currentTimeMillis()) + ".csv";
-        System.out.println(file.AddLogFile(fileSystem, CDL.toString(messagesBuffer.getJSONObject(0).names(), messagesBuffer), hdfsFilePath));
+        for (String day : messagesBuffer.keySet()){
+            String hdfsFilePath = "hdfs://localhost:9000/Logs/" + day + ".csv";
+            System.out.println(file.AddLogFile(fileSystem, CDL.toString(messagesBuffer.get(day).getJSONObject(0).names(), messagesBuffer.get(day)), hdfsFilePath));
+        }
 
 //        file.ReadFile(fileSystem,hdfsFilePath);
         file.closeFileSystem(fileSystem);
@@ -169,7 +189,7 @@ public class Receiver {
     public static void main(String[] args) throws IOException {
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
         System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
-        Receiver r = new Receiver();
+        ReceiverInterProcess r = new ReceiverInterProcess();
         r.runServer(3500);
     }
 }
