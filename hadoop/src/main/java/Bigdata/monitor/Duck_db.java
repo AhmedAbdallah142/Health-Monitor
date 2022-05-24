@@ -69,21 +69,23 @@ public class Duck_db {
         LocalDate d2 = s2.toLocalDate();
         Timestamp day2 = Timestamp.valueOf(LocalDateTime.of(d1, LocalTime.MIDNIGHT));
 
-        System.setProperty("fs.default.name","hdfs://localhost:9000");
+        String MinPath = "";
+        String DayPath = "";
+        String RealPath = "";
         Class.forName("org.duckdb.DuckDBDriver");
         Connection conn = DriverManager.getConnection("jdbc:duckdb:");
         Statement stmt = conn.createStatement();
-        //ResultSet rs = stmt.executeQuery("SELECT * FROM 'https://github.com/Teradata/kylo/blob/master/samples/sample-data/parquet/userdata1.parquet'");
-        ResultSet rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '2022-03-21 22:00:00.0' AND '2022-03-21 22:00:00.0';");
+        // start -> night1  {minutes}
+        ResultSet rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '"+start+"' AND '"+night1+"';");
         map = Update(rs,map);
         // night1 -> day2  {days}
-        rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '2022-03-21 22:00:00.0' AND '2022-03-21 22:00:00.0';");
+        rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '"+night1+"' AND '"+day2+"';");
         map = Update(rs,map);
         // day2 -> end  {minutes}
-        rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '2022-03-21 22:00:00.0' AND '2022-03-21 22:00:00.0';");
+        rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '"+day2+"' AND '"+end+"';");
         map = Update(rs,map);
         // realtime
-        rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '2022-03-21 22:00:00.0' AND '2022-03-21 22:00:00.0';");
+        rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '"+start+"' AND '"+end+"';");
         map = Update(rs,map);
         // using iterators
         Iterator<Map.Entry<String, Object>> itr = map.entrySet().iterator();
