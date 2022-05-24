@@ -1,0 +1,88 @@
+[debug] > Exec(early(addDefaultCommands), None, None)
+[debug] > Exec(addDefaultCommands, None, None)
+[debug] > Exec(early(initialize), None, None)
+[debug] > Exec(initialize, None, None)
+[debug] > Exec(boot, None, None)
+[debug] > Exec(writeSbtVersion, None, None)
+[debug] > Exec(reload, None, None)
+[debug] > Exec(sbtStashOnFailure, None, None)
+[debug] > Exec(onFailure loadFailed, None, None)
+[debug] > Exec(loadp, None, None)
+[info] welcome to sbt 1.6.2 (Private Build Java 17.0.3)
+[debug] Load.defaultLoad until apply took 1847.508415ms
+[debug]           Load.loadUnit: plugins took 66.66415ms
+[debug]           Load.loadUnit: defsScala took 0.270057ms
+[debug] [Loading] Scanning directory /home/ahmed/Projects/CSEY3T2/helloSpark/project
+[debug] [Loading] Found non-root projects 
+[debug] [Loading] Done in /home/ahmed/Projects/CSEY3T2/helloSpark/project, returning: ()
+[debug] deducing auto plugins based on known facts Set(Atom(sbt.plugins.CorePlugin)) and clauses Clauses(Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.IvyPlugin)))
+[debug] Clause(Atom(sbt.ScriptedPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.SbtPlugin),Set(Atom(sbt.ScriptedPlugin)))
+[debug] Clause(Atom(sbt.plugins.SemanticdbPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.JUnitXmlReportPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.MiniDependencyTreePlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.IvyPlugin)))
+[debug] Clause(Atom(sbt.plugins.IvyPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.SemanticdbPlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.JUnitXmlReportPlugin)))
+[debug] Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.Giter8TemplatePlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.MiniDependencyTreePlugin))))
+[debug]   :: deduced result: Matched(sbt.plugins.CorePlugin,sbt.plugins.Giter8TemplatePlugin,sbt.plugins.IvyPlugin,sbt.plugins.JvmPlugin,sbt.plugins.MiniDependencyTreePlugin,sbt.plugins.JUnitXmlReportPlugin,sbt.plugins.SemanticdbPlugin)
+[debug] Plugins.deducer#function took 16.673961 ms
+[debug]               Load.resolveProject(hellospark-build) took 104.708564ms
+[debug]             Load.loadTransitive: finalizeProject(Project(id hellospark-build, base: /home/ahmed/Projects/CSEY3T2/helloSpark/project, plugins: List(<none>))) took 141.007792ms
+[debug] [Loading] Done in /home/ahmed/Projects/CSEY3T2/helloSpark/project, returning: (hellospark-build)
+[debug]           Load.loadUnit: loadedProjectsRaw took 185.279567ms
+[debug]           Load.loadUnit: cleanEvalClasses took 0.538506ms
+[debug]         Load.loadUnit(file:/home/ahmed/Projects/CSEY3T2/helloSpark/project/, ...) took 258.020216ms
+[debug]       Load.apply: load took 749.16226ms
+[debug]       Load.apply: resolveProjects took 4.384755ms
+[debug]       Load.apply: finalTransforms took 63.662591ms
+[debug]       Load.apply: config.delegates took 6.534405ms
+[debug]       Load.apply: Def.make(settings)... took 759.779444ms
+[debug]       Load.apply: structureIndex took 93.752229ms
+[debug]       Load.apply: mkStreams took 1.489887ms
+[info] loading project definition from /home/ahmed/Projects/CSEY3T2/helloSpark/project
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[debug]     Load.loadUnit: plugins took 5080.401547ms
+[debug]     Load.loadUnit: defsScala took 0.00368ms
+[debug] [Loading] Scanning directory /home/ahmed/Projects/CSEY3T2/helloSpark
+[debug]       Load.loadUnit: mkEval took 4.69619ms
+[debug] [Loading] Found root project root w/ remaining 
+[debug] deducing auto plugins based on known facts Set(Atom(sbt.plugins.CorePlugin)) and clauses Clauses(Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.IvyPlugin)))
+[debug] Clause(Atom(sbt.ScriptedPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.SbtPlugin),Set(Atom(sbt.ScriptedPlugin)))
+[debug] Clause(Atom(sbt.plugins.SemanticdbPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.JUnitXmlReportPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.MiniDependencyTreePlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.IvyPlugin)))
+[debug] Clause(Atom(sbt.plugins.IvyPlugin),Set(Atom(sbt.plugins.JvmPlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.SemanticdbPlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.JUnitXmlReportPlugin)))
+[debug] Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.Giter8TemplatePlugin)))
+[debug] Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.MiniDependencyTreePlugin))))
+[debug]   :: deduced result: Matched(sbt.plugins.CorePlugin,sbt.plugins.Giter8TemplatePlugin,sbt.plugins.IvyPlugin,sbt.plugins.JvmPlugin,sbt.plugins.MiniDependencyTreePlugin,sbt.plugins.JUnitXmlReportPlugin,sbt.plugins.SemanticdbPlugin)
+[debug] Plugins.deducer#function took 2.528194 ms
+[info] loading settings for project root from build.sbt ...
+[debug]         Load.resolveProject(root) took 2.616079ms
+[debug]       Load.loadTransitive: finalizeProject(Project(id root, base: /home/ahmed/Projects/CSEY3T2/helloSpark, plugins: List(<none>))) took 6.621282ms
+[debug] [Loading] Done in /home/ahmed/Projects/CSEY3T2/helloSpark, returning: (root)
+[debug]     Load.loadUnit: loadedProjectsRaw took 1977.795236ms
+[debug]     Load.loadUnit: cleanEvalClasses took 3.767181ms
+[debug]   Load.loadUnit(file:/home/ahmed/Projects/CSEY3T2/helloSpark/, ...) took 7063.605935ms
+[debug] Load.apply: load took 7079.480177ms
+[debug] Load.apply: resolveProjects took 0.17823ms
+[debug] Load.apply: finalTransforms took 24.278883ms
+[debug] Load.apply: config.delegates took 0.351591ms
+[debug] Load.apply: Def.make(settings)... took 90.362344ms
+[debug] Load.apply: structureIndex took 29.252755ms
+[debug] Load.apply: mkStreams took 0.001847ms
+[info] set current project to helloSpark (in build file:/home/ahmed/Projects/CSEY3T2/helloSpark/)
+[debug] > Exec(sbtPopOnFailure, None, None)
+[debug] > Exec(resumeFromFailure, None, None)
+[debug] > Exec(notifyUsersAboutShell, None, None)
+[debug] > Exec(iflast shell, None, None)
+[debug] > Exec(shell, None, None)
+[info] sbt server started at local:///home/ahmed/.sbt/1.0/server/fdbca73eeaa68e57e078/sock
+[debug] Writing bsp connection file
+[info] started sbt server
