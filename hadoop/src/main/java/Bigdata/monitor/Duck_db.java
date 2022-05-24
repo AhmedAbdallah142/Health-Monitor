@@ -4,20 +4,22 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import Bigdata.Controller.serviceModel;
 
 public class Duck_db {
-    public static HashMap<String,Object> Update (ResultSet rs, HashMap<String,Object> map)throws ClassNotFoundException, SQLException{
+    public static HashMap<String,NewObject> Update (ResultSet rs, HashMap<String,NewObject> map)throws ClassNotFoundException, SQLException{
         while (rs.next()) {
             String service = rs.getString("service");
             if (!map.containsKey(service)) {
-                map.put(service, new Object());
+                map.put(service, new NewObject());
             }
 
             int count = rs.getInt("count");
-            Object temp = map.get(service);
+            NewObject temp = map.get(service);
             temp.setCount(temp.getCount() + count);
 
             double ACpu = rs.getDouble("ACpu");
@@ -25,10 +27,8 @@ public class Duck_db {
             temp.setACpu(temp.getACpu() + ACpu);
 
             double PCpu = rs.getDouble("PCpu");
-            String TCpu = rs.getString("TCpu");
             if (temp.getPCpu() < PCpu) {
                 temp.setPCpu(PCpu);
-                temp.setTCpu(TCpu);
             }
 
             double ADisk = rs.getDouble("ADisk");
@@ -36,10 +36,8 @@ public class Duck_db {
             temp.setADisk(temp.getADisk() + ADisk);
 
             double PDisk = rs.getDouble("PDisk");
-            String TDisk = rs.getString("TDisk");
             if (temp.getPDisk() < PDisk) {
                 temp.setPDisk(PDisk);
-                temp.setTDisk(TDisk);
             }
 
 
@@ -48,18 +46,16 @@ public class Duck_db {
             temp.setARam(temp.getARam() + ARam);
 
             double PRam = rs.getDouble("PRam");
-            String TRam = rs.getString("TRam");
             if (temp.getPRam() < PRam) {
                 temp.setPRam(PRam);
-                temp.setTRam(TRam);
             }
 
             map.replace(service, temp);
         }
         return map;
     }
-    public static void query(Timestamp start, Timestamp end) throws ClassNotFoundException, SQLException {
-        HashMap<String, Object> map = new HashMap<>();
+    public static ArrayList<serviceModel> query(Timestamp start, Timestamp end) throws ClassNotFoundException, SQLException {
+        HashMap<String, NewObject> map = new HashMap<>();
         LocalDateTime s1 = start.toLocalDateTime();
         LocalDate d1 = s1.toLocalDate();
         LocalDateTime endOfDate = d1.atTime(LocalTime.MAX);
@@ -76,31 +72,50 @@ public class Duck_db {
         Connection conn = DriverManager.getConnection("jdbc:duckdb:");
         Statement stmt = conn.createStatement();
         // start -> night1  {minutes}
-        ResultSet rs = stmt.executeQuery("SELECT * FROM '"+MinPath+"' WHERE time BETWEEN '"+start+"' AND '"+night1+"';");
+        ResultSet rs = stmt.executeQuery("SELECT SUM(count) as C,SUM(ACpu*count) as SCpu, MAX(PCpu) as PCpu ,SUM(ADisk*count) as SDisk, MAX(PDisk) as PDisk ,SUM(ARam*count) as SRam, MAX(PRam) as PRam " +
+                "FROM '"+MinPath+"' WHERE (time BETWEEN '"+start+"' AND '"+night1+"') OR (time BETWEEN '"+day2+"' AND '"+end+"')" +
+                "GROUP BY service;");
         map = Update(rs,map);
         // night1 -> day2  {days}
-        rs = stmt.executeQuery("SELECT * FROM '"+DayPath+"' WHERE time BETWEEN '"+night1+"' AND '"+day2+"';");
-        map = Update(rs,map);
-        // day2 -> end  {minutes}
-        rs = stmt.executeQuery("SELECT * FROM '"+MinPath+"' WHERE time BETWEEN '"+day2+"' AND '"+end+"';");
+        rs = stmt.executeQuery("SELECT SUM(count) as C,SUM(ACpu*count) as SCpu, MAX(PCpu) as PCpu ,SUM(ADisk*count) as SDisk, MAX(PDisk) as PDisk ,SUM(ARam*count) as SRam, MAX(PRam) as PRam " +
+                "FROM '"+DayPath+"' WHERE time BETWEEN '"+night1+"' AND '"+day2+"'" +
+                "GROUP BY service;");
         map = Update(rs,map);
         // realtime
-        rs = stmt.executeQuery("SELECT * FROM '"+RealPath+"' WHERE time BETWEEN '"+start+"' AND '"+end+"';");
+        rs = stmt.executeQuery("SELECT SUM(count) as C,SUM(ACpu*count) as SCpu, MAX(PCpu) as PCpu ,SUM(ADisk*count) as SDisk, MAX(PDisk) as PDisk ,SUM(ARam*count) as SRam, MAX(PRam) as PRam" +
+                " FROM '"+RealPath+"' WHERE time BETWEEN '"+start+"' AND '"+end+"'" +
+                "GROUP BY service;");
         map = Update(rs,map);
         // using iterators
-        Iterator<Map.Entry<String, Object>> itr = map.entrySet().iterator();
+        Iterator<Map.Entry<String, NewObject>> itr = map.entrySet().iterator();
+        ArrayList<serviceModel> list = new ArrayList<serviceModel>();
 
         while(itr.hasNext())
         {
-            Map.Entry<String, Object> entry = itr.next();
+            serviceModel s = new serviceModel();
+            Map.Entry<String, NewObject> entry = itr.next();
+            s.Name = entry.getKey();
+            int c = entry.getValue().getCount();
+            s.Count = c+"";
+            s.meanCPU = (entry.getValue().getACpu()/c)+"";
+            s.meanDisk = (entry.getValue().getADisk()/c )+"";
+            s.meanRAM = (entry.getValue().getARam()/c)+"";
+            s.peakCPU = entry.getValue().getPCpu()+"";
+            s.peakDisk = entry.getValue().getPDisk()+"";
+            s.peakRAM = entry.getValue().getPRam()+"";
+            list.add(s);
             System.out.println("Service = " + entry.getKey() +
                     "     " + entry.getValue().toString() );
         }
+        return list;
     }
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
         Timestamp t= new Timestamp(192992929);
-        query(t,t);
+        ArrayList<serviceModel> l = query(t,t);
+        for(serviceModel s: l){
+            System.out.println(s.toString());
+        }
     }
 }
