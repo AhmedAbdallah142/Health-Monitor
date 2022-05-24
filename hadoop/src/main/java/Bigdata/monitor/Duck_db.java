@@ -76,16 +76,16 @@ public class Duck_db {
         Connection conn = DriverManager.getConnection("jdbc:duckdb:");
         Statement stmt = conn.createStatement();
         // start -> night1  {minutes}
-        ResultSet rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '"+start+"' AND '"+night1+"';");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM '"+MinPath+"' WHERE time BETWEEN '"+start+"' AND '"+night1+"';");
         map = Update(rs,map);
         // night1 -> day2  {days}
-        rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '"+night1+"' AND '"+day2+"';");
+        rs = stmt.executeQuery("SELECT * FROM '"+DayPath+"' WHERE time BETWEEN '"+night1+"' AND '"+day2+"';");
         map = Update(rs,map);
         // day2 -> end  {minutes}
-        rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '"+day2+"' AND '"+end+"';");
+        rs = stmt.executeQuery("SELECT * FROM '"+MinPath+"' WHERE time BETWEEN '"+day2+"' AND '"+end+"';");
         map = Update(rs,map);
         // realtime
-        rs = stmt.executeQuery("SELECT * FROM 'Day-r-00000.snappy.parquet' WHERE time BETWEEN '"+start+"' AND '"+end+"';");
+        rs = stmt.executeQuery("SELECT * FROM '"+RealPath+"' WHERE time BETWEEN '"+start+"' AND '"+end+"';");
         map = Update(rs,map);
         // using iterators
         Iterator<Map.Entry<String, Object>> itr = map.entrySet().iterator();
