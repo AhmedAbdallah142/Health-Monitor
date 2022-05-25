@@ -23,7 +23,7 @@ public class Duck_db {
         Class.forName("org.duckdb.DuckDBDriver");
         Connection conn = DriverManager.getConnection("jdbc:duckdb:");
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM 'https://github.com/Teradata/kylo/blob/master/samples/sample-data/parquet/userdata1.parquet'");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM 'part-1.snappy.parquet'");
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnsNumber = rsmd.getColumnCount();
         while (rs.next()) {
