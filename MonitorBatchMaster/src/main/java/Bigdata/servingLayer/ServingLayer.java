@@ -22,6 +22,6 @@ public class ServingLayer {
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
         ServingLayer s = new ServingLayer();
 //        s.analysisRecompute();
-        s.analysisIncrement("20220527");
+        s.analysisIncrement("20220525");
     }
 }

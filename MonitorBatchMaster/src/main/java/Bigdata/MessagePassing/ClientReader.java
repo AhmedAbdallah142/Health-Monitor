@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.net.*;
 
 
-public class Client {
+public class ClientReader {
     @SuppressWarnings("resource")
     public static void main(String[] args) {
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
@@ -32,17 +32,17 @@ public class Client {
                         object = new StringBuilder(object.substring(0, object.length() - 1));
                         JSONObject massage = new JSONObject(object.toString());
 //                        System.out.println(massage.toString());
-                        byte[] buf = null;
+                        byte[] buf;
 
                         long date = massage.getLong("Timestamp");
                         long t_current = System.currentTimeMillis();
-//                        if(date < t_current/1000){
+                        if(date < t_current/1000){
                             buf = massage.toString().getBytes();
 //                        DatagramPacket DpSend =
 //                                new DatagramPacket(buf, buf.length, address, 3500);
 //                        socket.send(DpSend);
                             r.handleReceived(buf);
-//                        }
+                        }
                         object = new StringBuilder("{");
 //                        Thread.sleep(0);
                     }

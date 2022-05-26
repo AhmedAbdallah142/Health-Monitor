@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 public class Server {
-    final private static int maxMessages = 128;//25000;
+    final private static int maxMessages = 128;
     RealtimeSender server;
     private String currDate;
     private int messagesInBuffer = 0;

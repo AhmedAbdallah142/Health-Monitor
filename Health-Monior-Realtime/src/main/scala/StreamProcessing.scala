@@ -9,7 +9,7 @@ import java.util.Date
 
 object StreamProcessing {
 
-  val interval = 20
+  val interval = 10
   val hostName = "localhost"
   val port = 9999
   val outputPath = "../Data/RealTime/Current"
