@@ -23,7 +23,7 @@ public class Duck_db {
             temp.setCount(temp.getCount() + count);
 
             double ACpu = rs.getDouble("ACpu");
-            ACpu = ACpu * count;
+//            ACpu = ACpu * count;
             temp.setACpu(temp.getACpu() + ACpu);
 
             double PCpu = rs.getDouble("PCpu");
@@ -32,7 +32,7 @@ public class Duck_db {
             }
 
             double ADisk = rs.getDouble("ADisk");
-            ADisk = ADisk * count;
+//            ADisk = ADisk * count;
             temp.setADisk(temp.getADisk() + ADisk);
 
             double PDisk = rs.getDouble("PDisk");
@@ -42,7 +42,7 @@ public class Duck_db {
 
 
             double ARam = rs.getDouble("ARam");
-            ARam = ARam * count;
+//            ARam = ARam * count;
             temp.setARam(temp.getARam() + ARam);
 
             double PRam = rs.getDouble("PRam");
@@ -104,8 +104,8 @@ public class Duck_db {
             s.peakDisk = entry.getValue().getPDisk()+"";
             s.peakRAM = entry.getValue().getPRam()+"";
             list.add(s);
-            System.out.println("Service = " + entry.getKey() +
-                    "     " + entry.getValue().toString() );
+//            System.out.println("Service = " + entry.getKey() +
+//                    "     " + entry.getValue().toString() );
         }
         return list;
     }
