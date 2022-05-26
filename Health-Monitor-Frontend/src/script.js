@@ -1,7 +1,10 @@
 console.log("Hello Web!");
 
 const startDate = document.getElementById("start-date");
+const startDateMinute = document.getElementById("Minute-1");
 const endDate = document.getElementById("end-date");
+const endDateMinute = document.getElementById("Minute-2");
+
 const datatable = document.getElementById("data");
 
 const sampleRes = JSON.parse(
@@ -22,11 +25,14 @@ function data_row(serviceData) {
   </tr>
   `;
 }
-
+function toTimestamp(strDate){
+   var datum = Date.parse(strDate);
+   return datum/1000;
+}
 let lock = false;
 function getAnalysis() {
-  const from = startDate.value.split("-").reverse().join("-"),
-    to = endDate.value.split("-").reverse().join("-");
+  const from = toTimestamp(startDate.value.split("-").reverse().join("/").concat(" ", startDateMinute.value.concat(":00"))),
+    to = toTimestamp(endDate.value.split("-").reverse().join("/").concat(" ", endDateMinute.value.concat(":00")));
 
   if(lock) {
     window.alert("Locked!")
