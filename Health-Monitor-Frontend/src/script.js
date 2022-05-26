@@ -31,8 +31,8 @@ function toTimestamp(strDate){
 }
 let lock = false;
 function getAnalysis() {
-  const from = startDate.value.split("-").join("-").concat(" ", startDateMinute.value.concat(":00")),
-    to = endDate.value.split("-").join("-").concat(" ", endDateMinute.value.concat(":00"));
+  const from = startDate.value.concat(" ", startDateMinute.value.concat(":00")),
+    to = endDate.value.concat(" ", endDateMinute.value.concat(":00"));
 
   if(lock) {
     window.alert("Locked!")
