@@ -117,7 +117,7 @@ public class Server {
     private void sendBatch() throws IOException {
         long tec = System.nanoTime();
         HadoopFileOperation file = new HadoopFileOperation();
-        String hdfsFilePath = "hdfs://localhost:9000/Logs/" + "20220527" + ".csv";
+        String hdfsFilePath = "hdfs://localhost:9000/Logs/" + currDate + ".csv";
         System.out.println(file.AddLogFile(messagesBuffer.toString(), hdfsFilePath));
 
 //        file.ReadFile(fileSystem,hdfsFilePath);

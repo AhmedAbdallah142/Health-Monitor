@@ -21,7 +21,7 @@ public class ServingLayer {
         System.setProperty("hadoop.home.dir", "/usr/local/hadoop");
         System.setProperty("HADOOP_USER_NAME", "hadoopuser");
         ServingLayer s = new ServingLayer();
-        s.analysisRecompute();
-//        s.analysisIncrement("20220527");
+//        s.analysisRecompute();
+        s.analysisIncrement("20220527");
     }
 }

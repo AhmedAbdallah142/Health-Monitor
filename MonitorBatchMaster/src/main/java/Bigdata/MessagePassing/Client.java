@@ -20,7 +20,7 @@ public class Client {
             DatagramSocket socket = new DatagramSocket();
 
             int n = 142;
-            for(int i = 25 ; i < n ; i++) {
+            for(int i = 0 ; i < n ; i++) {
                 File myObj = new File("/media/ahmed/ESD-ISO/health_data/health_"+(i)+".json");
 //                File myObj = new File("health_141.json");
                 StringBuilder object = new StringBuilder();
