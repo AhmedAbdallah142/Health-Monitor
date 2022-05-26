@@ -4,13 +4,15 @@ import org.apache.spark.streaming._
 import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 
 import java.sql.Timestamp
+import java.text.ParseException
+import java.util.Date
 
 object StreamProcessing {
 
   val interval = 20
   val hostName = "localhost"
   val port = 9999
-  val outputPath = "test-out"
+  val outputPath = "../Data/RealTime/Current"
 
   def main(args: Array[String]): Unit = {
     // Create a local StreamingContext
@@ -19,6 +21,7 @@ object StreamProcessing {
 
     // Read the CSV row by row where each line represent a row
     val lines = ssc.socketTextStream(hostName, port)
+    lines.print()
     val serviceStatsOut = computeStreamOut(lines)
 
     // Start a spark session to save the output
@@ -47,15 +50,16 @@ object StreamProcessing {
     val splits = lines.map(_.split(","))
 
     val serviceInfo = splits
+      .filter(_.length == 7)
       .map(arr => (
-        arr(0), // Service name
-        arr(1).toLong * 1000, // Timestamp
-        arr(2).toDouble, // CPU utilization
+        arr(1), // Service name
+        arr(2).toLong * 1000, // Timestamp
+        arr(0).toDouble, // CPU utilization
         1 - (arr(4).toDouble / arr(3).toDouble), // RAM utilization
         1 - (arr(6).toDouble / arr(5).toDouble) // Disk utilization
       ))
       .map(arr => (
-        (arr._1, arr._2 / 1000), // Key (Service name, Timestamp in minutes)
+        (arr._1, getMin(arr._2)), // Key (Service name, Timestamp in minutes)
         ( // Value
           arr._3, arr._3, arr._2,
           arr._4, arr._4, arr._2,
@@ -78,7 +82,7 @@ object StreamProcessing {
     ))
 
     val serviceStatsOut = serviceStats.map(elem => HealthMonitorStats(
-      elem._1._1, new Timestamp(elem._1._2 * 1000), elem._2._10,
+      elem._1._1, getMinTimeStamp(elem._1._2), elem._2._10,
       elem._2._1, elem._2._2, new Timestamp(elem._2._3), // CPU
       elem._2._7, elem._2._8, new Timestamp(elem._2._9), // Disk
       elem._2._4, elem._2._5, new Timestamp(elem._2._6)  // RAM
@@ -86,17 +90,31 @@ object StreamProcessing {
 
     serviceStatsOut
   }
+
+  import java.text.SimpleDateFormat
+
+  def getMin(timeStamp: Long): String = {
+    val pattern = "yyyyMMddHHmm"
+    val simpleDateFormat = new SimpleDateFormat(pattern)
+    simpleDateFormat.format(new Date(timeStamp))
+  }
+
+  @throws[ParseException]
+  def getMinTimeStamp(Day: String): Timestamp = {
+    val simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmm")
+    new Timestamp(simpleDateFormat.parse(Day).getTime)
+  }
 }
 
 /*
 Input:
-Service1,1646485461,0.2,4,1.5,100,75
-Service1,1646485462,0.7,4,0.5,100,70
-Service1,1646485463,0.3,4,0.5,100,20
-Service2,1646485463,0.3,4,0.5,100,20
-Service3,1646485463,0.3,4,0.5,100,20
-Service4,1646485463,0.3,4,0.5,100,20
-Service5,1646485463,0.3,4,0.5,100,20
+0.2,Service1,1646485461,4,1.5,100,75
+0.7,Service1,1646485462,4,0.5,100,70
+0.3,Service1,1646485463,4,0.5,100,20
+0.3,Service2,1646485463,4,0.5,100,20
+0.3,Service3,1646485463,4,0.5,100,20
+0.3,Service4,1646485463,4,0.5,100,20
+0.3,Service5,1646485463,4,0.5,100,20
 
 ((Service1,1646485),(0.39999999999999997,0.7,1646485462,0.7916666666666666,0.875,1646485463,0.45,0.8,1646485463,3))
  */
